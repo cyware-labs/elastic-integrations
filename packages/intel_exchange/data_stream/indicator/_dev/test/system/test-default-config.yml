@@ -1,0 +1,15 @@
+input: cel
+service: indicator-api
+vars:
+  access_id: test_username
+  secret_key: test_secret_key
+  url: http://{{Hostname}}:{{Port}}
+data_stream:
+  vars:
+    page_number: 1
+    page_size: 50
+    enable_request_tracer: true
+    ioc_duration_before_deletion: 7d
+    preserve_original_event: true
+assert:
+  hit_count: 1

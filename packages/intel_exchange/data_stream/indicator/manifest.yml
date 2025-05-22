@@ -1,0 +1,66 @@
+type: logs
+title: Intel Exchange Indicator
+ilm_policy: logs-intel_exchange.indicator-default_policy
+streams:
+  - input: cel
+    template_path: cel.yml.hbs
+    title: IOCs
+    description: Retrieves indicators from the save result endpoint of the Intel Exchange API
+    vars:
+      - name: page_size
+        type: integer
+        title: Page Size
+        description: The number of objects to return in each response. The maximum is 1000.
+        default: 50
+        multi: false
+        required: false
+        show_user: false
+      - name: page_number
+        type: integer
+        title: Page Number
+        description: The number of page to return response from.
+        default: 1
+        multi: false
+        required: false
+        show_user: false
+      - name: ioc_duration_before_deletion
+        type: text
+        title: IOC Duration Before Deletion
+        multi: false
+        required: true
+        show_user: true
+        default: "180d"
+        description: >-
+          All IOCs are deleted after this duration. This setting is required to avoid "orphaned" IOCs that never expire. If an earlier expiration time is set upstream, that will be used. Use [Elasticsearch time units](https://www.elastic.co/guide/en/elasticsearch/reference/current/api-conventions.html#time-units) to specify a duration in minutes, hours or days (e.g 10d).
+      - name: preserve_original_event
+        required: true
+        show_user: true
+        title: Preserve original event
+        description: Preserves a raw copy of the original event, added to the field `event.original`
+        type: bool
+        multi: false
+        default: false
+      - name: enable_request_tracer
+        type: bool
+        title: Enable request tracing
+        multi: false
+        required: false
+        show_user: false
+        description: >-
+          The request tracer logs requests and responses to the agent's local file-system for debugging configurations. Enabling this request tracing compromises security and should only be used for debugging. See [documentation](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-input-cel.html#_resource_tracer_filename) for details.
+      - name: http_client_timeout
+        type: text
+        title: HTTP Client Timeout
+        description: Duration before declaring that the HTTP client connection has timed out. Valid time units are ns, us, ms, s, m, h.
+        multi: false
+        required: false
+        show_user: false
+        default: 30s
+      - name: processors
+        type: yaml
+        title: Processors
+        multi: false
+        required: false
+        show_user: false
+        description: >-
+          Processors are used to reduce the number of fields in the exported event or to enhance the event with metadata. This executes in the agent before the logs are parsed. See [Processors](https://www.elastic.co/guide/en/beats/filebeat/current/filtering-and-enhancing-data.html) for details.

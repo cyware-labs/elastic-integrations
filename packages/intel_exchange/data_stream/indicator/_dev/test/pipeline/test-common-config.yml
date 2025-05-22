@@ -1,0 +1,5 @@
+fields:
+  _conf:
+    ioc_duration_before_deletion: 90d
+dynamic_fields:
+  "@timestamp": ".*"

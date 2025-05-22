@@ -1,0 +1,62 @@
+format_version: 3.3.2
+name: intel_exchange
+title: "Intel Exchange"
+version: 0.0.1
+description: "This is a new package"
+type: integration
+categories: ["security", "threat_intel"]
+conditions:
+  kibana:
+    version: "^8.17.3 || ^9.0.0"
+  elastic:
+    subscription: "basic"
+screenshots:
+  - src: /img/intel_exchange-logo.svg
+    title: Sample screenshot
+    size: 600x600
+    type: image/svg+xml
+icons:
+  - src: /img/intel_exchange-logo.svg
+    title: Intel Exchange
+    size: 216x216
+    type: image/svg+xml
+policy_templates:
+  - name: intel_exchange
+    title: Intel Exchange
+    description: Intel Exchange indicators.
+    inputs:
+      - type: cel
+        title: Collect Intel Exchange indicators via API
+        description: Collecting Intel Exchange via API.
+        vars:
+          - name: url
+            type: text
+            title: URL
+            description: "Base URL of the cyware intel exchange API."
+            required: true
+            show_user: true
+          - name: access_id
+            type: text
+            title: Access ID
+            description: "Access ID of a Intel Exchange API User."
+            multi: false
+            required: true
+            show_user: true
+          - name: secret_key
+            type: password
+            title: Secret Key
+            description: "Secret Key of a Intel Exchange API User."
+            multi: false
+            required: true
+            show_user: true
+            secret: true
+          - name: ssl
+            type: yaml
+            title: SSL Configuration
+            description: SSL configuration options. See [documentation](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-ssl.html#ssl-common-config) for details.
+            multi: false
+            required: false
+            show_user: false
+owner:
+  github: elastic/security-service-integrations
+  type: partner
