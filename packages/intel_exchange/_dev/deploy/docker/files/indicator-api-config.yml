@@ -1,5 +1,5 @@
 rules:
-  - path: /api/ingestion/rules/save_result_set/
+  - path: /ingestion/rules/save_result_set/
     methods: ["GET"]
     query_params:
       page_size: 50
