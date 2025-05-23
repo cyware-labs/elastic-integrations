@@ -7,157 +7,222 @@ rules:
       AccessID: test_username
     responses:
       - status_code: 200
-        body:
-          next: null
-          previous: null
-          page_size: 10
-          total: 1
-          results:
-            - id: "fc1c1b96-2e74-4cc1-b515-184963e311b4"
-              ctix_created: 1649406695
-              ctix_modified: 1649406695
-              version: "v2"
-              ctix_tags:
-                - id: "acb6cafe-c688-4d10-884e-f00123dd1d42"
-                  name: "two"
-                  type: "manual"
-                  created: 1649406622
-                  modified: 1649406622
-                  created_by:
-                    id: "59f01fa7-3628-4218-b123-c00243881adc"
-                    email: "John@gmail.com"
-                    last_name: "John"
-                    first_name: "John"
-                  colour_code: "#0068FA"
-                  modified_by:
-                    id: "59f01fa7-3628-4218-b123-c00243881adc"
-                    email: "John@gmail.com"
-                    last_name: "John"
-                    first_name: "John"
-              data:
-                tlp: "WHITE"
-                source:
-                  id: "e10ebfe4-4e15-4a5c-9ac3-eb21251a054d"
-                  name: "Import"
-                tenant_id: "b2f4ff80-071a-4e5e-b9bc-4f81729a981d"
-                indicators:
-                  - ttp: []
-                    name: ""
-                    name2: "8.8.8.8"
-                    score: 46
-                    title: "ipv4: 8.8.8.8||indicator--3ab255ca-5664-421b-885c-17d02256a244"
-                    sources:
-                      - source__name: "Import"
-                    deprecated: false
-                    criticality: 0
-                    whitelisted: false
-                    risk_severity: 0
-                    indicator_type: "ipv4-addr"
-                    stix_object_id: "b2f53079-d203-44c5-8806-9de5be1e9974"
-                    threat_data_url: "hxxps://xyz.com/ctix/threatdata/indicator/b2f53079-d203-44c5-8806-9de5be1e9974/overview"
-                    custom_properties: null
-                    is_false_positive: false
-                    object_description: null
-                  - ttp: []
-                    name: ""
-                    name2: "3.2.1.1"
-                    score: null
-                    title: "ipv4: 3.2.1.1||indicator--210c915e-d927-46f7-9495-99cb6c05bf2a"
-                    sources:
-                      - source__name: "Import"
-                    deprecated: false
-                    criticality: 0
-                    whitelisted: false
-                    risk_severity: 0
-                    indicator_type: "ipv4-addr"
-                    stix_object_id: "b66e8954-fb19-4a02-afad-8dc5ae5666a6"
-                    threat_data_url: "hxxps://xyz.com/ctix/threatdata/indicator/b66e8954-fb19-4a02-afad-8dc5ae5666a6/overview"
-                    custom_properties: null
-                    is_false_positive: false
-                    object_description: null
-                  - ttp: []
-                    name: ""
-                    name2: "1.1.1.1"
-                    score: 44
-                    title: "ipv4: 1.1.1.1||indicator--ab6446e4-be75-4a49-9ac2-4bcfcf7742ef"
-                    sources:
-                      - source__name: "Import"
-                    deprecated: false
-                    criticality: 0
-                    whitelisted: false
-                    risk_severity: 0
-                    indicator_type: "ipv4-addr"
-                    stix_object_id: "835652d2-0f25-4917-bbc1-c2f7e9972edd"
-                    threat_data_url: "hxxps://xyz.com/ctix/threatdata/indicator/835652d2-0f25-4917-bbc1-c2f7e9972edd/overview"
-                    custom_properties: null
-                    is_false_positive: false
-                    object_description: null
-                  - title: "CVE-1234"
-                    cve_id: "CVE-1234"
-                    source:
-                      value: "e10ebfe4-4e15-4a5c-9ac3-eb21251a054d"
-                    is_known: true
-                    description:
-                      - value: "newisnew"
-                        ordinality: null
-                        structuring_format: null
-                    stix_object_id: "5d086b20-e3fb-44bc-8319-c6bda6fbe3d0"
-                    threat_data_url: "hxxps://xyz.com/ctix/threatdata/vulnerability/5d086b20-e3fb-44bc-8319-c6bda6fbe3d0/overview"
-                    short_description: []
-                    is_publicly_acknowledged: true
-                    related_affected_software: []
-                  - title: "CVE-321"
-                    cve_id: "CVE-321"
-                    source:
-                      value: "e10ebfe4-4e15-4a5c-9ac3-eb21251a054d"
-                    is_known: true
-                    description:
-                      - value: "dsffhgdsferhfdefe"
-                        ordinality: null
-                        structuring_format: null
-                    stix_object_id: "028ce8f1-e3fb-41f4-a008-8713924fe215"
-                    threat_data_url: "hxxps://xyz.com/ctix/threatdata/vulnerability/028ce8f1-e3fb-41f4-a008-8713924fe215/overview"
-                    short_description: []
-                    is_publicly_acknowledged: true
-                    related_affected_software: []
-                stix_header:
-                  title: "test Report"
-                  handling:
-                    - marking:
-                        - name: "TLPMarking"
-                          type: "tlp"
-                      marking_structures:
-                        - marking:
-                            type: "tlp"
-                            fields:
-                              - value: "WHITE"
-                  profiles: []
-                  description:
-                    - value: null
-                      ordinality: null
-                      structuring_format: null
-                  package_intent: []
-                  short_description: []
-                  information_source:
-                    role: []
-                    time:
-                      end_time:
-                        value: null
-                        precision: null
-                      start_time:
-                        value: null
-                        precision: null
-                      produced_time:
-                        value: null
-                        precision: null
-                      received_time:
-                        value: null
-                        precision: null
-                    tools: []
-                    identity: {}
-                    references: []
-                    description: []
-                csap_card_id: ""
-                intel_package_url: "hxxps://xyz.com/ctix/threatdata/report/f1bac45a-9bf5-4e58-a629-19e69212564e/overview"
-              timestamp: 1649406695
-              title: "test Report"
+        body: |-
+            {
+              "next": null,
+              "previous": null,
+              "page_size": 10,
+              "total": 1,
+              "results": [
+                {
+                  "id": "fc1c1b96-2e74-4cc1-b515-184963e311b4",
+                  "ctix_created": 1649406695,
+                  "ctix_modified": 1649406695,
+                  "version": "v2",
+                  "ctix_tags": [
+                    {
+                      "id": "acb6cafe-c688-4d10-884e-f00123dd1d42",
+                      "name": "two",
+                      "type": "manual",
+                      "created": 1649406622,
+                      "modified": 1649406622,
+                      "created_by": {
+                        "id": "59f01fa7-3628-4218-b123-c00243881adc",
+                        "email": "John@gmail.com",
+                        "last_name": "John",
+                        "first_name": "John"
+                      },
+                      "colour_code": "#0068FA",
+                      "modified_by": {
+                        "id": "59f01fa7-3628-4218-b123-c00243881adc",
+                        "email": "John@gmail.com",
+                        "last_name": "John",
+                        "first_name": "John"
+                      }
+                    }
+                  ],
+                  "data": {
+                    "tlp": "WHITE",
+                    "source": {
+                      "id": "e10ebfe4-4e15-4a5c-9ac3-eb21251a054d",
+                      "name": "Import"
+                    },
+                    "tenant_id": "b2f4ff80-071a-4e5e-b9bc-4f81729a981d",
+                    "indicators": [
+                      {
+                        "ttp": [],
+                        "name": "",
+                        "name2": "8.8.8.8",
+                        "score": 46,
+                        "title": "ipv4: 8.8.8.8||indicator--3ab255ca-5664-421b-885c-17d02256a244",
+                        "sources": [
+                          {
+                            "source__name": "Import"
+                          }
+                        ],
+                        "deprecated": false,
+                        "criticality": 0,
+                        "whitelisted": false,
+                        "risk_severity": 0,
+                        "indicator_type": "ipv4-addr",
+                        "stix_object_id": "b2f53079-d203-44c5-8806-9de5be1e9974",
+                        "threat_data_url": "hxxps://xyz.com/ctix/threatdata/indicator/b2f53079-d203-44c5-8806-9de5be1e9974/overview",
+                        "custom_properties": null,
+                        "is_false_positive": false,
+                        "object_description": null
+                      },
+                      {
+                        "ttp": [],
+                        "name": "",
+                        "name2": "3.2.1.1",
+                        "score": null,
+                        "title": "ipv4: 3.2.1.1||indicator--210c915e-d927-46f7-9495-99cb6c05bf2a",
+                        "sources": [
+                          {
+                            "source__name": "Import"
+                          }
+                        ],
+                        "deprecated": false,
+                        "criticality": 0,
+                        "whitelisted": false,
+                        "risk_severity": 0,
+                        "indicator_type": "ipv4-addr",
+                        "stix_object_id": "b66e8954-fb19-4a02-afad-8dc5ae5666a6",
+                        "threat_data_url": "hxxps://xyz.com/ctix/threatdata/indicator/b66e8954-fb19-4a02-afad-8dc5ae5666a6/overview",
+                        "custom_properties": null,
+                        "is_false_positive": false,
+                        "object_description": null
+                      },
+                      {
+                        "ttp": [],
+                        "name": "",
+                        "name2": "1.1.1.1",
+                        "score": 44,
+                        "title": "ipv4: 1.1.1.1||indicator--ab6446e4-be75-4a49-9ac2-4bcfcf7742ef",
+                        "sources": [
+                          {
+                            "source__name": "Import"
+                          }
+                        ],
+                        "deprecated": false,
+                        "criticality": 0,
+                        "whitelisted": false,
+                        "risk_severity": 0,
+                        "indicator_type": "ipv4-addr",
+                        "stix_object_id": "835652d2-0f25-4917-bbc1-c2f7e9972edd",
+                        "threat_data_url": "hxxps://xyz.com/ctix/threatdata/indicator/835652d2-0f25-4917-bbc1-c2f7e9972edd/overview",
+                        "custom_properties": null,
+                        "is_false_positive": false,
+                        "object_description": null
+                      },
+                      {
+                        "title": "CVE-1234",
+                        "cve_id": "CVE-1234",
+                        "source": {
+                          "value": "e10ebfe4-4e15-4a5c-9ac3-eb21251a054d"
+                        },
+                        "is_known": true,
+                        "description": [
+                          {
+                            "value": "newisnew",
+                            "ordinality": null,
+                            "structuring_format": null
+                          }
+                        ],
+                        "stix_object_id": "5d086b20-e3fb-44bc-8319-c6bda6fbe3d0",
+                        "threat_data_url": "hxxps://xyz.com/ctix/threatdata/vulnerability/5d086b20-e3fb-44bc-8319-c6bda6fbe3d0/overview",
+                        "short_description": [],
+                        "is_publicly_acknowledged": true,
+                        "related_affected_software": []
+                      },
+                      {
+                        "title": "CVE-321",
+                        "cve_id": "CVE-321",
+                        "source": {
+                          "value": "e10ebfe4-4e15-4a5c-9ac3-eb21251a054d"
+                        },
+                        "is_known": true,
+                        "description": [
+                          {
+                            "value": "dsffhgdsferhfdefe",
+                            "ordinality": null,
+                            "structuring_format": null
+                          }
+                        ],
+                        "stix_object_id": "028ce8f1-e3fb-41f4-a008-8713924fe215",
+                        "threat_data_url": "hxxps://xyz.com/ctix/threatdata/vulnerability/028ce8f1-e3fb-41f4-a008-8713924fe215/overview",
+                        "short_description": [],
+                        "is_publicly_acknowledged": true,
+                        "related_affected_software": []
+                      }
+                    ],
+                    "stix_header": {
+                      "title": "test Report",
+                      "handling": [
+                        {
+                          "marking": [
+                            {
+                              "name": "TLPMarking",
+                              "type": "tlp"
+                            }
+                          ],
+                          "marking_structures": [
+                            {
+                              "marking": {
+                                "type": "tlp",
+                                "fields": [
+                                  {
+                                    "value": "WHITE"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "profiles": [],
+                      "description": [
+                        {
+                          "value": null,
+                          "ordinality": null,
+                          "structuring_format": null
+                        }
+                      ],
+                      "package_intent": [],
+                      "short_description": [],
+                      "information_source": {
+                        "role": [],
+                        "time": {
+                          "end_time": {
+                            "value": null,
+                            "precision": null
+                          },
+                          "start_time": {
+                            "value": null,
+                            "precision": null
+                          },
+                          "produced_time": {
+                            "value": null,
+                            "precision": null
+                          },
+                          "received_time": {
+                            "value": null,
+                            "precision": null
+                          }
+                        },
+                        "tools": [],
+                        "identity": {},
+                        "references": [],
+                        "description": []
+                      }
+                    },
+                    "csap_card_id": "",
+                    "intel_package_url": "hxxps://xyz.com/ctix/threatdata/report/f1bac45a-9bf5-4e58-a629-19e69212564e/overview"
+                  },
+                  "timestamp": 1649406695,
+                  "title": "test Report"
+                }
+              ]
+            }
+            
+          

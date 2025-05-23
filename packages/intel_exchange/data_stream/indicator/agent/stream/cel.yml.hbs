@@ -26,8 +26,8 @@ state:
 program: |-
 	state.with(
         {
-                "expires": {{string(int(now + duration("28s")))}},
-                "signature": {{string(state.access_id + "\n" + string(int(now + duration("28s")))).hmac("sha1", bytes(state.secret_key)).base64()}}
+                "expires":  int(now + duration("28s")),
+                "signature":  string(state.access_id + "\n" + string(int(now + duration("28s")))).hmac("sha1", bytes(state.secret_key)).base64()
         }
 	).as(state,
         state.with(
@@ -38,7 +38,7 @@ program: |-
                                 "page": [string(state.page_number)],
                                 "version": [string("v3")],
                                 "AccessID": [state.access_id],
-                                "Expires": [state.expires],
+                                "Expires": [string(state.expires)],
                                 "Signature": [state.signature]
                         }.format_query()
                 )
