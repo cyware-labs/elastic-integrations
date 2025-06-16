@@ -1,6 +1,6 @@
 type: logs
 title: Intel Exchange Indicator
-ilm_policy: logs-intel_exchange.indicator-default_policy
+ilm_policy: logs-ti_intel_exchange.indicator-default_policy
 streams:
   - input: cel
     template_path: cel.yml.hbs

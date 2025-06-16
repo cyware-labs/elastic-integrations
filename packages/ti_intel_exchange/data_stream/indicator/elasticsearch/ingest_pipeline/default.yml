@@ -1,0 +1,347 @@
+---
+description: Pipeline for parsing Intel Exchange Threat-Intel feed
+
+processors:
+  ####################################################################
+  # 1. ECS & Event metadata                                           #
+  ####################################################################
+  - set:
+      tag: set_ecs_version
+      field: ecs.version
+      value: 8.17.0
+
+  - set:
+      tag: set_event_kind
+      field: event.kind
+      value: enrichment
+
+  - set:
+      tag: set_event_category
+      field: event.category
+      value: [threat]
+
+  - set:
+      tag: set_event_type
+      field: event.type
+      value: [indicator]
+
+  ####################################################################
+  # 2. Keep original message (if shipped as a single line of JSON)    #
+  ####################################################################
+  - rename:
+      tag: rename_message_to_event_original
+      field: message
+      target_field: event.original
+      ignore_missing: true
+      if: ctx.event?.original == null           # preserve if Logstash already set it
+
+  - remove:
+      tag: remove_message
+      field: message
+      ignore_missing: true
+      if: ctx.event?.original != null
+
+  ####################################################################
+  # 3. Unpack the JSON                                                #
+  ####################################################################
+  - json:
+      tag: json_event_original
+      field: event.original
+      target_field: intelx                         #  ‹— top-level object for the raw feed
+      on_failure:
+        - append:
+            field: error.message
+            value: 'json decode failure: {{{_ingest.on_failure_message}}}'
+
+  ####################################################################
+  # 4. Basic normalisation / type coercion                            #
+  ####################################################################
+  # 4.1  Dates
+  #       Intel Exchange sends all date-times as ISO-8601 (Zulu) strings
+  - date:
+      tag: date_updated_at
+      field: intelx.updated_at
+      target_field: intelx.updated_at
+      formats: ['ISO8601']
+      if: ctx.intelx?.updated_at != null
+      on_failure:
+        - remove:
+            field: intelx.updated_at
+            ignore_missing: true
+
+  - set:
+      tag: set_timestamp_from_updated_at
+      field: '@timestamp'
+      copy_from: intelx.updated_at
+      ignore_empty_value: true
+
+  - date:
+      tag: date_created_at
+      field: intelx.created_at
+      target_field: intelx.created_at
+      formats: ['ISO8601']
+      if: ctx.intelx?.created_at != null
+
+  - date:
+      tag: date_expires_at
+      field: intelx.expires_at
+      target_field: intelx.expires_at
+      formats: ['ISO8601']
+      if: ctx.intelx?.expires_at != null
+
+  # 4.2  Numeric → long
+  - convert:
+      tag: convert_score_to_long
+      field: intelx.score
+      type: long
+      ignore_missing: true
+      on_failure:
+        - remove: {field: intelx.score, ignore_missing: true}
+
+  ####################################################################
+  # 5. ECS Threat-Indicator mapping                                   #
+  ####################################################################
+
+  # 5.0  Common attributes
+  - set:
+      tag: set_indicator_description
+      field: threat.indicator.description
+      copy_from: intelx.description
+      ignore_empty_value: true
+
+  # 5.1  Indicator confidence (Intel Exchange 0-100 ⇒ ECS Low/Medium/High)
+  - script:
+      tag: script_set_indicator_confidence
+      lang: painless
+      description: Normalise intelx.score to ECS confidence string
+      if: ctx.intelx?.score != null
+      source: |
+        int score = ctx.intelx.score;
+        Map i = ctx.computeIfAbsent("threat", k -> new HashMap())
+                   .computeIfAbsent("indicator", k -> new HashMap());
+        if      (score < 40)  { i.confidence = "Low";    }
+        else if (score < 70)  { i.confidence = "Medium"; }
+        else                  { i.confidence = "High";   }
+
+  # 5.2  Indicator value & type routing
+  #
+  #  Intel Exchange provides two flat fields:
+  #     intelx.indicator_type  (Domain, IP, URL, SHA-256, …)
+  #     intelx.indicator_value
+  #
+  #  The blocks below copy the value into the correct ECS attribute and
+  #  set threat.indicator.type accordingly.  Add / delete blocks as you
+  #  support more / fewer types.
+
+  # -- Email ---------------------------------------------------------
+  - set:
+      tag: set_email_addr
+      field: threat.indicator.email.address
+      copy_from: intelx.indicator_value
+      if: ctx.intelx?.indicator_type == 'Email'
+      ignore_empty_value: true
+
+  - set:
+      tag: set_type_email_addr
+      field: threat.indicator.type
+      value: email-addr
+      if: ctx.intelx?.indicator_type == 'Email'
+
+  # -- FQDN / domain -------------------------------------------------
+  - set:
+      tag: set_domain
+      field: threat.indicator.url.domain
+      copy_from: intelx.indicator_value
+      if: ctx.intelx?.indicator_type == 'Domain'
+      ignore_empty_value: true
+
+  - set:
+      tag: set_type_domain
+      field: threat.indicator.type
+      value: domain-name
+      if: ctx.intelx?.indicator_type == 'Domain'
+
+  # -- IPv4 ----------------------------------------------------------
+  - set:
+      tag: set_ipv4
+      field: threat.indicator.ip
+      copy_from: intelx.indicator_value
+      if: ctx.intelx?.indicator_type == 'IPv4'
+      ignore_empty_value: true
+
+  - set:
+      tag: set_type_ipv4
+      field: threat.indicator.type
+      value: ipv4-addr
+      if: ctx.intelx?.indicator_type == 'IPv4'
+
+  - append:
+      tag: append_related_ip
+      field: related.ip
+      value: '{{{intelx.indicator_value}}}'
+      allow_duplicates: false
+      if: ctx.intelx?.indicator_type == 'IPv4'
+
+  # -- IPv6 ----------------------------------------------------------
+  - set:
+      tag: set_ipv6
+      field: threat.indicator.ip
+      copy_from: intelx.indicator_value
+      if: ctx.intelx?.indicator_type == 'IPv6'
+      ignore_empty_value: true
+
+  - set:
+      tag: set_type_ipv6
+      field: threat.indicator.type
+      value: ipv6-addr
+      if: ctx.intelx?.indicator_type == 'IPv6'
+
+  - append:
+      tag: append_related_ipv6
+      field: related.ip
+      value: '{{{intelx.indicator_value}}}'
+      allow_duplicates: false
+      if: ctx.intelx?.indicator_type == 'IPv6'
+
+  # -- URL -----------------------------------------------------------
+  - uri_parts:
+      tag: uri_parts_url
+      field: intelx.indicator_value
+      target_field: threat.indicator.url
+      keep_original: true
+      remove_if_successful: true
+      if: ctx.intelx?.indicator_type == 'URL'
+      on_failure:
+        - set:
+            field: threat.indicator.url.full
+            value: '{{{intelx.indicator_value}}}'
+            ignore_empty_value: true
+
+  - set:
+      tag: set_type_url
+      field: threat.indicator.type
+      value: url
+      if: ctx.intelx?.indicator_type == 'URL'
+
+  # -- File hashes (MD5, SHA-1, SHA-256, SHA-512) --------------------
+  - set:
+      tag: set_md5
+      field: threat.indicator.file.hash.md5
+      copy_from: intelx.indicator_value
+      if: ctx.intelx?.indicator_type == 'MD5'
+      ignore_empty_value: true
+  - set:
+      tag: set_type_file_md5
+      field: threat.indicator.type
+      value: file
+      if: ctx.intelx?.indicator_type == 'MD5'
+  - append:
+      tag: append_related_hash_md5
+      field: related.hash
+      value: '{{{intelx.indicator_value}}}'
+      allow_duplicates: false
+      if: ctx.intelx?.indicator_type == 'MD5'
+
+  - set:
+      tag: set_sha1
+      field: threat.indicator.file.hash.sha1
+      copy_from: intelx.indicator_value
+      if: ctx.intelx?.indicator_type == 'SHA1'
+      ignore_empty_value: true
+  - set:
+      tag: set_sha1_type
+      field: threat.indicator.type
+      value: file
+      if: ctx.intelx?.indicator_type == 'SHA1'
+  - append:
+      tag: append_related_hash_sha1
+      field: related.hash
+      value: '{{{intelx.indicator_value}}}'
+      allow_duplicates: false
+      if: ctx.intelx?.indicator_type == 'SHA1'
+
+  - set:
+      tag: set_sha256
+      field: threat.indicator.file.hash.sha256
+      copy_from: intelx.indicator_value
+      if: ctx.intelx?.indicator_type == 'SHA256'
+      ignore_empty_value: true
+  - set:
+      tag: set_sha256_type
+      field: threat.indicator.type
+      value: file
+      if: ctx.intelx?.indicator_type == 'SHA256'
+  - append:
+      tag: append_related_hash_sha256
+      field: related.hash
+      value: '{{{intelx.indicator_value}}}'
+      allow_duplicates: false
+      if: ctx.intelx?.indicator_type == 'SHA256'
+
+  ####################################################################
+  # 6. Indicator expiration handling                                  #
+  ####################################################################
+  #   If the feed contains intelx.expires_at we copy it to a helper
+  #   field that can later be used by a Transform's retention policy.
+  - set:
+      tag: set_ioc_expired_at
+      field: intelx.ioc_expired_at
+      copy_from: intelx.expires_at
+      ignore_empty_value: true
+  
+  - set:
+      tag: set_tags
+      field: tags
+      copy_from: intelx.data.tags
+      ignore_empty_value: true
+
+  ####################################################################
+  # 7. Clean-up & defensive coding                                    #
+  ####################################################################
+  - script:
+      tag: script_drop_nulls
+      lang: painless
+      description: Recursively drop null / empty values
+      source: |
+        boolean purge(def v){
+          if (v == null || v == '' || (v instanceof List && v.isEmpty()) || (v instanceof Map && v.isEmpty())){
+            return true;
+          }
+          if (v instanceof Map){ ((Map)v).values().removeIf(x -> purge(x)); return ((Map)v).isEmpty(); }
+          if (v instanceof List){ ((List)v).removeIf(x -> purge(x)); return ((List)v).isEmpty(); }
+          return false;
+        }
+        purge(ctx);
+
+  - remove:
+      tag: remove_raw_fields
+      field: [ intelx.description, intelx.score ]   # already copied elsewhere
+      ignore_missing: true
+
+  ####################################################################
+  # 8. Mark pipeline errors                                           #
+  ####################################################################
+  - set:
+      tag: set_pipeline_error_kind
+      field: event.kind
+      value: pipeline_error
+      if: ctx.error?.message != null
+
+  - append:
+      tag: append_pipeline_error_tag
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false
+      if: ctx.error?.message != null
+
+on_failure:
+  - append:
+      field: error.message
+      value: 'pipeline failure: {{{_ingest.on_failure_message}}}'
+  - set:
+      field: event.kind
+      value: pipeline_error
+  - append:
+      field: tags
+      value: preserve_original_event
+      allow_duplicates: false

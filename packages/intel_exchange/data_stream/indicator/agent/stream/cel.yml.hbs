@@ -26,7 +26,7 @@ state:
 program: |-
 	state.with(
         {
-                "expires":  int(now + duration("28s")),
+                "expires": int(now + duration("28s")),
                 "signature":  string(state.access_id + "\n" + string(int(now + duration("28s")))).hmac("sha1", bytes(state.secret_key)).base64()
         }
 	).as(state,
@@ -72,6 +72,7 @@ program: |-
                         }
         )
 )
+
 tags:
 {{#if preserve_original_event}}
   - preserve_original_event

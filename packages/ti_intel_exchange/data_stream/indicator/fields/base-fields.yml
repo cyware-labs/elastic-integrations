@@ -11,10 +11,10 @@
   type: constant_keyword
   description: Event module
   value: intel_exchange
-- name: event.dataset
-  type: constant_keyword
-  description: Event dataset
-  value: intel_exchange.indicator
+# - name: event.dataset
+#   type: constant_keyword
+#   description: Event dataset
+#   value: intel_exchange.indicator
 # - name: threat.feed.dashboard_id
 #   type: constant_keyword
 #   description: Dashboard ID used for Kibana CTI UI

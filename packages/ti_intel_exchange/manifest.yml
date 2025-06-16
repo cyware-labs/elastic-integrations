@@ -1,5 +1,5 @@
 format_version: 3.3.2
-name: intel_exchange
+name: ti_intel_exchange
 title: "Intel Exchange"
 version: 0.0.1
 description: "This is a new package"
@@ -21,7 +21,7 @@ icons:
     size: 216x216
     type: image/svg+xml
 policy_templates:
-  - name: intel_exchange
+  - name: ti_intel_exchange
     title: Intel Exchange
     description: Intel Exchange indicators.
     inputs:
